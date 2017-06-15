@@ -1,0 +1,3 @@
+Main Stream - rtsp://IP:554/11
+Sub Stream - rtsp://IP:554/12  (640x360)
+Phone Stream - rtsp://IP:554/13
