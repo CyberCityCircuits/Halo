@@ -14,7 +14,7 @@ import subprocess
 
 
 application = "Ping_Halo"
-version = "0.01.00"
+version = "0.01.10"
 name = application + "  V" + version
 email = "David@DREAM-Enterprise.com"
 
@@ -36,6 +36,8 @@ cent_width = int(width)-1
 dev_width = 10
 
 scan = 31
+
+os_name = os.name #Tells app what OS it is running on.
 
 #define cosole size and color
 os.system("mode con: cols=" + str(width) + " lines=" + str(lines))
@@ -71,23 +73,40 @@ def set_id_list():
 def ping_all():   
     global list_ping_read
     list_ping_read = ["UNK"] * count_camera
+  
+    if os_name == "nt":  #checks to see if ran in Windows
+        for c in list_id_no:
+    
+            host = scheme + str(c)
+            #print("Pinging " + host)
+    
+            ping = subprocess.Popen(["ping.exe","-n","1","-w","1",host],stdout = subprocess.PIPE).communicate()[0]
+            if ('unreachable' in str(ping)) or ('timed' in str(ping)) or ('failure' in str(ping)):
+                list_ping[int(c)-101] = 0
+                #print ("Camera " + str(c) + " is DOWN")
+                list_ping_read[int(c)-101] = "DOWN"
+            else:
+                list_ping[int(c)-101] = 1
+                #print ("Camera " + str(c) + " is UP")
+                list_ping_read[int(c)-101] = "UP"
+        #pause(0.5)
+    
+    if os_name == "posix": #checks to see if ran in Linux
+        for c in list_id_no:
+    
+            host = scheme + str(c)
+            #print("Pinging " + host)
 
-    for c in list_id_no:
-
-        host = scheme + str(c)
-        #print("Pinging " + host)
-
-        ping = subprocess.Popen(["ping.exe","-n","1","-w","1",host],stdout = subprocess.PIPE).communicate()[0]
-        if ('unreachable' in str(ping)) or ('timed' in str(ping)) or ('failure' in str(ping)):
-            list_ping[int(c)-101] = 0
-            #print ("Camera " + str(c) + " is DOWN")
-            list_ping_read[int(c)-101] = "DOWN"
-        else:
-            list_ping[int(c)-101] = 1
-            #print ("Camera " + str(c) + " is UP")
-            list_ping_read[int(c)-101] = "UP"
-    #pause(0.5)
-            
+            ping = subprocess.Popen(["ping","-c","1","-w","1",host],stdout = subprocess.PIPE).communicate()[0]
+            if ('unreachable' in str(ping)) or ('timed' in str(ping)) or ('failure' in str(ping)) or ('0 received' in str(ping)):
+                list_ping[int(c)-101] = 0
+                #print ("Camera " + str(c) + " is DOWN")
+                list_ping_read[int(c)-101] = "DOWN"
+            else:
+                list_ping[int(c)-101] = 1
+                #print ("Camera " + str(c) + " is UP")
+                list_ping_read[int(c)-101] = "UP"
+        
         
 def ui():
     os.system("cls")

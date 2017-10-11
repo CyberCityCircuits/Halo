@@ -7,6 +7,7 @@ DREAM-Enterprise.com
 David@DREAM-Enterprise.com
 '''
 
+import os
 import datetime as dt
 
 #set varibales
@@ -26,6 +27,7 @@ currdatetime = currdate + "-" + currtime
 width = 300
 lines = 300
 
+os_name = os.name
 
 cam_grid_bit = 0
 count_camera = 5
